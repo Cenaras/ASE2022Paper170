@@ -3,7 +3,9 @@
 echo "Building GOAT binaries..."
 echo ""
 
-./benchmarks/run.py --dir ase_results
+./benchmarks/all-benchmarks.sh
+
+#./benchmarks/run.py --dir ase_results
 
 echo "Analysis results:"
 ./benchmarks/tally.py ase_results

@@ -8,32 +8,33 @@ import (
 )
 
 type options struct {
-	goroBound       uint
-	minlen          uint
-	pseti           int
-	nodesep         float64
-	function        string
-	outputFormat    string
-	gopath          string
-	modulePath      string
-	psets           string
-	task            string
-	logai           bool
-	metrics         bool
-	noColorize      bool
-	httpDebug       bool
-	verbose         bool
-	extended        bool
-	packageSplit    bool
-	includeInternal bool
-	includeTests    bool
-	localPackages   bool
-	visualize       bool
-	fullCg          bool
-	justGoros       bool
-	skipChanNames   bool
-	skipSync        bool
-	noAbort         bool
+	goroBound        uint
+	minlen           uint
+	pseti            int
+	nodesep          float64
+	function         string
+	outputFormat     string
+	gopath           string
+	modulePath       string
+	psets            string
+	task             string
+	logai            bool
+	metrics          bool
+	noColorize       bool
+	httpDebug        bool
+	verbose          bool
+	extended         bool
+	packageSplit     bool
+	includeInternal  bool
+	includeTests     bool
+	localPackages    bool
+	visualize        bool
+	fullCg           bool
+	justGoros        bool
+	skipChanNames    bool
+	skipSync         bool
+	noAbort          bool
+	analysisStrategy string
 }
 
 const (
@@ -287,6 +288,10 @@ func (optInterface) NoAbort() bool {
 	return opts.noAbort
 }
 
+func (optInterface) AnalysisStrategy() string {
+	return opts.analysisStrategy
+}
+
 func init() {
 	taskFlag := "\n"
 	for _, task := range task {
@@ -314,6 +319,7 @@ func init() {
 in "module-aware" mode (GO111MODULE=on).`)
 	flag.StringVar(&(opts.psets), "psets", psets[_PSET_GCATCH].flag, "When collecting primitives, determine primitive grouping strategy. Options:"+psetFlag)
 	flag.StringVar(&(opts.task), "task", task[_ABSTRACT_INTERP].flag, "Set the task to do during execution. Options:"+taskFlag)
+	flag.StringVar(&(opts.analysisStrategy), "analysisStrategy", "default strategy", "Set the strategy")
 	flag.BoolVar(&(opts.logai), "ai-logging", false, "Enable logging of specific events during abstract interpretation")
 	flag.BoolVar(&(opts.metrics), "metrics", false, "Enable collection of performance metrics for abstract interpretation")
 	flag.BoolVar(&(opts.noColorize), "no-colorize", false, "Disable pretty printer colorization")

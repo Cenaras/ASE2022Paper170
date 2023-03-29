@@ -17,4 +17,5 @@ ROOT=$(realpath "$(dirname "$0")")
 
 DOCKER_BUILDKIT=1 docker build -t goat $ROOT --build-arg REPO="$REPO" --build-arg ACTION="./benchmarks/_full-benchmarks.sh"
 
-docker run --rm -it goat
+docker run --rm -it -v benchmarks:/home/GOAT/benchmarks goat
+sudo cp -rp /var/lib/docker/volumnes/benchmars/ ~/Speciale/benchmarks

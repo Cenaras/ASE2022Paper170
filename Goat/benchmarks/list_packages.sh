@@ -12,6 +12,11 @@ while IFS=, read -r NAME REPO COMMITHASH; do
 		continue
 	fi
 	#echo "Checking ${NAME}:"
+	if [[ "$NAME" != "grpc" ]]; then
+		# Temporarily filter out kubernetes packages because there are a ton
+		# and we cannot run go list succesfully in some of the submodules.
+		continue
+	fi
 
 	if [ -d "$ROOT/external/gfuzz/$NAME" ]; then
 		"$ROOT/benchmarks/list_packages_in_repo.sh" "$GFUZZ" "$NAME"

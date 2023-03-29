@@ -15,6 +15,8 @@ import (
 
 type TargetType int
 
+var strategyMap map[string]pointer.ContextStrategy
+
 // Configuration structure determines for values of which types
 // to include queries in the Andersen analysis.
 // Only pointer-like values appear in this list
@@ -144,13 +146,19 @@ func GetPtsToSets(prog *ssa.Program, mains []*ssa.Package) *pointer.Result {
 		Chan:      true,
 		Function:  true,
 		Interface: true,
-	})
+	}, "default")
 }
 
-func Andersen(prog *ssa.Program, mains []*ssa.Package, include IncludeType) *pointer.Result {
+func Andersen(prog *ssa.Program, mains []*ssa.Package, include IncludeType, strategy string) *pointer.Result {
+	strategyMap = make(map[string]pointer.ContextStrategy)
+	strategyMap["default"] = nil
+	strategyMap["1Obj"] = &pointer.KObjNHeap{1, 0, true}
+	strategyMap["2Obj+H"] = &pointer.KObjNHeap{2, 1, true}
+
 	a_config := &pointer.Config{
-		Mains:          mains,
-		BuildCallGraph: true,
+		Mains:           mains,
+		BuildCallGraph:  true,
+		ContextStrategy: strategyMap[strategy],
 	}
 
 	collectPtsToQueries(prog, a_config, include)
@@ -168,7 +176,7 @@ func Andersen(prog *ssa.Program, mains []*ssa.Package, include IncludeType) *poi
 func TotalAndersen(prog *ssa.Program, mains []*ssa.Package) *pointer.Result {
 	return Andersen(prog, mains, IncludeType{
 		All: true,
-	})
+	}, "default")
 }
 
 type atag struct{}
@@ -202,7 +210,7 @@ func SplitLabel(label *pointer.Label) (ssa.Value, []Access) {
 				accesses[i] = ArrayAccess{}
 			} else {
 				// The dot before the field name is discarded
-				accesses[i] = FieldAccess{ Field: f[1:] }
+				accesses[i] = FieldAccess{Field: f[1:]}
 			}
 		}
 		return v, accesses

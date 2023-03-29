@@ -2,7 +2,7 @@ module Goat
 
 go 1.18
 
-replace golang.org/x/tools => github.com/cenaras/tools v0.0.0-20230323100042-2748883dd075
+replace golang.org/x/tools => github.com/cenaras/tools v0.0.0-20230329085311-4f64ec702f14
 
 require (
 	github.com/benbjohnson/immutable v0.3.0

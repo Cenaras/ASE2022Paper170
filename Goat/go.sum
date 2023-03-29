@@ -1,7 +1,7 @@
 github.com/benbjohnson/immutable v0.3.0 h1:TVRhuZx2wG9SZ0LRdqlbs9S5BZ6Y24hJEHTCgWHZEIw=
 github.com/benbjohnson/immutable v0.3.0/go.mod h1:uc6OHo6PN2++n98KHLxW8ef4W42ylHiQSENghE1ezxI=
-github.com/cenaras/tools v0.0.0-20230323100042-2748883dd075 h1:DRfgIksXvwMCa4vBU8r8IDqDLTZp8mfdP38cNjaWES4=
-github.com/cenaras/tools v0.0.0-20230323100042-2748883dd075/go.mod h1:N+Kgy78s5I24c24dU8OfWNEotWjutIs8SnJvn5IDq+k=
+github.com/cenaras/tools v0.0.0-20230329085311-4f64ec702f14 h1:LoiPyqGIcdWL/OLbz2ET8n7BQVXjzTjlN49gPppur0E=
+github.com/cenaras/tools v0.0.0-20230329085311-4f64ec702f14/go.mod h1:N+Kgy78s5I24c24dU8OfWNEotWjutIs8SnJvn5IDq+k=
 github.com/corona10/goimagehash v1.0.2 h1:pUfB0LnsJASMPGEZLj7tGY251vF+qLGqOgEP4rUs6kA=
 github.com/corona10/goimagehash v1.0.2/go.mod h1:/l9umBhvcHQXVtQO1V6Gp1yD20STawkhRnnX0D1bvVI=
 github.com/fatih/color v1.13.0 h1:8LOYc1KYPPmyKMuN8QV2DNRWNbLo6LZ0iLs8+mlH53w=

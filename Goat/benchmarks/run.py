@@ -36,10 +36,12 @@ parser.add_argument(
     default="default",
     help="Choose an order to run the benchmarks in",
 )
+parser.add_argument("--analysisStrategy", help="The analysis strategy")
 parser.add_argument("--flags", help="Flags to pass on to Goat.", nargs=REMAINDER)
 args = parser.parse_args()
 
 flags = "" if args.flags is None else " ".join(args.flags)
+analysisStrategy = "default" if args.analysisStrategy is None else args.analysisStrategy
 
 entry_progress_re = re.compile(r"Entry (\d+) of (\d+)")
 num_primitives_re = re.compile(r"(\d+) primitives outside GOROOT")
@@ -144,8 +146,8 @@ if __name__ == "__main__":
                 dynamic_ncols=True,
             ) as pbar:
 
-                command = f"""./Goat -gopath {ROOT / 'external/gfuzz'} -modulepath {module_path}
-                            -include-tests -metrics {flags} -task collect-primitives {package}""".split()
+                command = f"""./Goat -gopath {ROOT / 'external/gfuzz'} -modulepath {module_path} -analysisStrategy {analysisStrategy}
+                            -include-tests -metrics {flags} -task collect-primitives {package} """.split()
 
                 # Put the command to run the analysis at the top of the log
                 print(*command, file=outfile, flush=True)
