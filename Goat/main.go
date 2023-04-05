@@ -3,6 +3,7 @@ package main
 import (
 	// "Goat/solver"
 
+	"context"
 	"fmt"
 	"go/types"
 	"log"
@@ -96,12 +97,27 @@ func main() {
 	// Assemble pre-analysis preanalysisPipeline
 	preanalysisPipeline := func(includes u.IncludeType) (*pointer.Result, *cfg.Cfg) {
 		fmt.Println()
+
 		strategy := opts.AnalysisStrategy()
 		log.Printf("Performing points-to analysis with %s\n...", strategy)
+
+		ctx, _ := context.WithTimeout(context.Background(), 5*time.Minute)
+		c := make(chan *pointer.Result)
+
 		start := time.Now()
-		ptaResult := u.Andersen(prog, mains, includes, strategy)
+		go func() {
+			ptaResult := u.Andersen(prog, mains, includes, strategy)
+			c <- ptaResult
+		}()
+		var ptaResult *pointer.Result
+		select {
+		case ptaResult = <-c:
+		case <-ctx.Done():
+			panic("Analysis timed out")
+		}
+
 		elapsed := time.Since(start)
-		log.Printf("Analysis took: %f seconds", elapsed.Seconds())
+		log.Printf("Points-to analysis took: %f seconds", elapsed.Seconds())
 		log.Println("Points-to analysis done")
 		fmt.Println()
 

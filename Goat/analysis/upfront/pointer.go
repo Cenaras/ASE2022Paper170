@@ -151,10 +151,16 @@ func GetPtsToSets(prog *ssa.Program, mains []*ssa.Package) *pointer.Result {
 
 func Andersen(prog *ssa.Program, mains []*ssa.Package, include IncludeType, strategy string) *pointer.Result {
 	strategyMap = make(map[string]pointer.ContextStrategy)
+	strategyMap["insens"] = &pointer.Insens{}
 	strategyMap["default"] = nil
 	strategyMap["1Obj"] = &pointer.KObjNHeap{1, 0, true}
 	strategyMap["2Obj+H"] = &pointer.KObjNHeap{2, 1, true}
 	strategyMap["1Call"] = &pointer.KCallNHeap{1, 0, false}
+	strategyMap["1Call+H"] = &pointer.KCallNHeap{1, 1, false}
+	strategyMap["U1Obj"] = &pointer.U1Obj{true}
+	strategyMap["U2Obj+H"] = &pointer.S2ObjH{true}
+	strategyMap["SB1Obj"] = &pointer.SB1Obj{true}
+	strategyMap["SA1Obj"] = &pointer.SA1Obj{true}
 	strategyMap["2SObj+H"] = &pointer.S2ObjH{true}
 
 	a_config := &pointer.Config{
