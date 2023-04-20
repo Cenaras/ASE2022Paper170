@@ -16,6 +16,7 @@ import (
 	"sync"
 	"time"
 
+	"Goat/alias"
 	"Goat/analysis/upfront/chreflect"
 	"Goat/analysis/upfront/loopinline"
 	dot "Goat/graph"
@@ -118,7 +119,7 @@ func main() {
 		fmt.Println()
 
 		//log.Println("Extending CFG...")
-		//progCfg := cfg.GetCFG(prog, mains, ptaResult)
+		progCfg := cfg.GetCFG(prog, mains, ptaResult)
 		//log.Println("CFG extensions done")
 		//fmt.Println()
 
@@ -136,11 +137,13 @@ func main() {
 		return ptaResult, progCfg
 	}
 
-	preanalysisPipeline(u.IncludeType{All: true})
-
+	result, _ := preanalysisPipeline(u.IncludeType{All: true})
+	start := time.Now()
+	aliases := alias.GetAlias(result)
+	log.Printf("Number of aliases: %d", aliases)
+	log.Printf("Alias analysis took: %f seconds", time.Since(start).Seconds())
 
 }
-
 
 func main_old() {
 	utils.ParseArgs()
