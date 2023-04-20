@@ -90,6 +90,102 @@ func main() {
 	allPackages := pkgutil.AllPackages(prog)
 	pkgutil.GetLocalPackages(mains, allPackages)
 
+	// Assemble pre-analysis preanalysisPipeline
+	preanalysisPipeline := func(includes u.IncludeType) (*pointer.Result, *cfg.Cfg) {
+		fmt.Println()
+
+		strategy := opts.AnalysisStrategy()
+		log.Printf("Performing points-to analysis with %s\n...", strategy)
+
+		ctx, _ := context.WithTimeout(context.Background(), 5*time.Minute)
+		c := make(chan *pointer.Result)
+
+		start := time.Now()
+		go func() {
+			ptaResult := u.Andersen(prog, mains, includes, strategy)
+			c <- ptaResult
+		}()
+		var ptaResult *pointer.Result
+		select {
+		case ptaResult = <-c:
+		case <-ctx.Done():
+			panic("Analysis timed out")
+		}
+
+		elapsed := time.Since(start)
+		log.Printf("Points-to analysis took: %f seconds", elapsed.Seconds())
+		log.Println("Points-to analysis done")
+		fmt.Println()
+
+		//log.Println("Extending CFG...")
+		//progCfg := cfg.GetCFG(prog, mains, ptaResult)
+		//log.Println("CFG extensions done")
+		//fmt.Println()
+
+		opts.OnVerbose(func() {
+			for val, ptr := range ptaResult.Queries {
+				fmt.Printf("Points to information for \"%s\" at %d (%s):\n",
+					val, val.Pos(), prog.Fset.Position(val.Pos()))
+				for _, label := range ptr.PointsTo().Labels() {
+					fmt.Printf("%s : %d (%s), ", label, (*label).Pos(), prog.Fset.Position((*label).Pos()))
+				}
+				fmt.Print("\n\n")
+			}
+		})
+
+		return ptaResult, progCfg
+	}
+
+	preanalysisPipeline(u.IncludeType{All: true})
+
+
+}
+
+
+func main_old() {
+	utils.ParseArgs()
+	path := utils.MakePath()
+
+	if opts.HttpDebug() {
+		go func() {
+			log.Println(http.ListenAndServe("localhost:6060", nil))
+		}()
+	}
+
+	pkgs, err := pkgutil.LoadPackages(pkgutil.LoadConfig{
+		GoPath:       opts.GoPath(),
+		ModulePath:   opts.ModulePath(),
+		IncludeTests: opts.IncludeTests(),
+	}, path)
+	if err != nil {
+		log.Println("Failed pkgutil.LoadPackages")
+		log.Println(err)
+		os.Exit(1)
+	}
+
+	// pkgs = u.UnrollLoops(pkgs)
+	err = loopinline.InlineLoops(pkgs)
+	if err != nil {
+		log.Fatalln("Loop inlining failed?", err)
+	}
+
+	if opts.Task().IsCanBuild() {
+		return
+	}
+
+	prog, _ := ssautil.AllPackages(pkgs, 0)
+	prog.Build()
+
+	mains := ssautil.MainPackages(prog.AllPackages())
+
+	if len(mains) == 0 {
+		log.Println("No main packages detected")
+		return
+	}
+
+	allPackages := pkgutil.AllPackages(prog)
+	pkgutil.GetLocalPackages(mains, allPackages)
+
 	if !opts.SkipChanNames() {
 		u.CollectNames(pkgs)
 	}
