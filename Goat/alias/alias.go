@@ -5,6 +5,7 @@ import (
 
 	"golang.org/x/tools/go/pointer"
 	"golang.org/x/tools/go/ssa"
+	"golang.org/x/tools/go/ssa/ssautil"
 )
 
 type alias struct {
@@ -16,18 +17,41 @@ type alias struct {
 	pointers   []ssa.Value
 }
 
-func GetAlias(result *pointer.Result) int {
-	al := &alias{}
-	for v, _ := range result.Queries {
-		al.checkType(v, v.Type())
+func GetAlias(prog *ssa.Program, result *pointer.Result) int {
+	bigCounter := 0
+	for fun := range ssautil.AllFunctions(prog) {
+		al := &alias{}
+		for _, param := range fun.Params {
+			al.checkType(param, param.Type())
+		}
+		for _, fv := range fun.FreeVars {
+			al.checkType(fv, fv.Type())
+		}
+
+		for _, block := range fun.Blocks {
+			for _, insn := range block.Instrs {
+				switch v := insn.(type) {
+				case *ssa.Call:
+					common := v.Common()
+					// if common.IsInvoke() {
+					al.checkType(common.Value, common.Value.Type())
+					// }
+					al.checkType(v, v.Type())
+				case *ssa.Range:
+				case ssa.Value:
+					al.checkType(v, v.Type())
+				}
+			}
+		}
+		channels := checkAlias(result.Queries, al.channels)
+		signatures := checkAlias(result.Queries, al.signatures)
+		interfaces := checkAlias(result.Queries, al.interfaces)
+		maps := checkAlias(result.Queries, al.maps)
+		slices := checkAlias(result.Queries, al.slices)
+		pointers := checkAlias(result.Queries, al.pointers)
+		bigCounter += len(channels) + len(signatures) + len(interfaces) + len(maps) + len(slices) + len(pointers)
 	}
-	channels := checkAlias(result.Queries, al.channels)
-	signatures := checkAlias(result.Queries, al.signatures)
-	interfaces := checkAlias(result.Queries, al.interfaces)
-	maps := checkAlias(result.Queries, al.maps)
-	slices := checkAlias(result.Queries, al.slices)
-	pointers := checkAlias(result.Queries, al.pointers)
-	return len(channels) + len(signatures) + len(interfaces) + len(maps) + len(slices) + len(pointers)
+	return bigCounter
 }
 
 func (al *alias) checkType(v ssa.Value, t types.Type) {

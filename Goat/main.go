@@ -139,7 +139,7 @@ func main() {
 
 	result, _ := preanalysisPipeline(u.IncludeType{All: true})
 	start := time.Now()
-	aliases := alias.GetAlias(result)
+	aliases := alias.GetAlias(prog, result)
 	log.Printf("Number of aliases: %d", aliases)
 	log.Printf("Alias analysis took: %f seconds", time.Since(start).Seconds())
 
