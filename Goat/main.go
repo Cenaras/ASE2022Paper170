@@ -16,10 +16,10 @@ import (
 	"sync"
 	"time"
 
-	"Goat/alias"
 	"Goat/analysis/upfront/chreflect"
 	"Goat/analysis/upfront/loopinline"
 	dot "Goat/graph"
+	"Goat/mayfailcast"
 	"Goat/pkgutil"
 	tu "Goat/testutil"
 	"Goat/utils"
@@ -139,9 +139,11 @@ func main() {
 
 	result, _ := preanalysisPipeline(u.IncludeType{All: true})
 	start := time.Now()
-	aliases := alias.GetAlias(prog, result)
-	log.Printf("Number of aliases: %d", aliases)
-	log.Printf("Alias analysis took: %f seconds", time.Since(start).Seconds())
+	mayFails, totalCasts, totalOkCasts := mayfailcast.MayFailCast(prog, result)
+	log.Printf("Number of non-ok casts: %d", totalCasts)
+	log.Printf("Number of ok casts: %d", totalOkCasts)
+	log.Printf("Number of May Fail Casts: %d", len(mayFails))
+	log.Printf("Cast analysis took: %f seconds", time.Since(start).Seconds())
 
 }
 
