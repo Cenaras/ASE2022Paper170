@@ -2,7 +2,7 @@ module Goat
 
 go 1.18
 
-//replace golang.org/x/tools => github.com/cenaras/tools v0.0.0-20230426112355-15e9969d7676
+replace golang.org/x/tools => github.com/cenaras/tools v0.0.0-20230510104123-e9ae37b2f0b4
 
 require (
 	github.com/benbjohnson/immutable v0.3.0
@@ -19,6 +19,6 @@ require (
 	github.com/mattn/go-isatty v0.0.14 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	golang.org/x/image v0.0.0-20200119044424-58c23975cae1 // indirect
-	golang.org/x/mod v0.7.0 // indirect
-	golang.org/x/sys v0.4.0 // indirect
+	golang.org/x/mod v0.10.0 // indirect
+	golang.org/x/sys v0.7.0 // indirect
 )
