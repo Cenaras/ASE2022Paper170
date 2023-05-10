@@ -19,7 +19,6 @@ import (
 	"Goat/analysis/upfront/chreflect"
 	"Goat/analysis/upfront/loopinline"
 	dot "Goat/graph"
-	"Goat/mayfailcast"
 	"Goat/pkgutil"
 	tu "Goat/testutil"
 	"Goat/utils"
@@ -137,13 +136,13 @@ func main() {
 		return ptaResult, progCfg
 	}
 
-	result, _ := preanalysisPipeline(u.IncludeType{All: true})
-	start := time.Now()
-	mayFails, totalCasts, totalOkCasts := mayfailcast.MayFailCast(prog, result)
-	log.Printf("Number of non-ok casts: %d", totalCasts)
-	log.Printf("Number of ok casts: %d", totalOkCasts)
-	log.Printf("Number of May Fail Casts: %d", len(mayFails))
-	log.Printf("Cast analysis took: %f seconds", time.Since(start).Seconds())
+	preanalysisPipeline(u.IncludeType{All: true})
+	//start := time.Now()
+	//mayFails, totalCasts, totalOkCasts := mayfailcast.MayFailCast(prog, result)
+	//log.Printf("Number of non-ok casts: %d", totalCasts)
+	//log.Printf("Number of ok casts: %d", totalOkCasts)
+	//log.Printf("Number of May Fail Casts: %d", len(mayFails))
+	//log.Printf("Cast analysis took: %f seconds", time.Since(start).Seconds())
 
 }
 

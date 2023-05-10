@@ -15,7 +15,7 @@ import (
 
 type TargetType int
 
-var strategyMap map[string]pointer.ContextStrategy
+//var strategyMap map[string]pointer.ContextStrategy
 
 // Configuration structure determines for values of which types
 // to include queries in the Andersen analysis.
@@ -150,23 +150,23 @@ func GetPtsToSets(prog *ssa.Program, mains []*ssa.Package) *pointer.Result {
 }
 
 func Andersen(prog *ssa.Program, mains []*ssa.Package, include IncludeType, strategy string) *pointer.Result {
-	strategyMap = make(map[string]pointer.ContextStrategy)
-	strategyMap["insens"] = &pointer.Insens{}
-	strategyMap["default"] = nil
-	strategyMap["1Obj"] = &pointer.KObjNHeap{1, 0, false}
-	strategyMap["2Obj+H"] = &pointer.KObjNHeap{2, 1, false}
-	strategyMap["1Call"] = &pointer.KCallNHeap{1, 0, false}
-	strategyMap["1Call+H"] = &pointer.KCallNHeap{1, 1, false}
-	strategyMap["U1Obj"] = &pointer.U1Obj{false}
-	strategyMap["U2Obj+H"] = &pointer.U2ObjH{false}
-	strategyMap["SB1Obj"] = &pointer.SB1Obj{false}
-	strategyMap["SA1Obj"] = &pointer.SA1Obj{false}
-	strategyMap["2SObj+H"] = &pointer.S2ObjH{false}
+	//strategyMap = make(map[string]pointer.ContextStrategy)
+	//strategyMap["insens"] = &pointer.Insens{}
+	//strategyMap["default"] = nil
+	//strategyMap["1Obj"] = &pointer.KObjNHeap{1, 0, false}
+	//strategyMap["2Obj+H"] = &pointer.KObjNHeap{2, 1, false}
+	//strategyMap["1Call"] = &pointer.KCallNHeap{1, 0, false}
+	//strategyMap["1Call+H"] = &pointer.KCallNHeap{1, 1, false}
+	//strategyMap["U1Obj"] = &pointer.U1Obj{false}
+	//strategyMap["U2Obj+H"] = &pointer.U2ObjH{false}
+	//strategyMap["SB1Obj"] = &pointer.SB1Obj{false}
+	//strategyMap["SA1Obj"] = &pointer.SA1Obj{false}
+	//strategyMap["2SObj+H"] = &pointer.S2ObjH{false}
 
 	a_config := &pointer.Config{
 		Mains:           mains,
 		BuildCallGraph:  true,
-		ContextStrategy: strategyMap[strategy],
+		//ContextStrategy: strategyMap[strategy],
 	}
 
 	collectPtsToQueries(prog, a_config, include)
