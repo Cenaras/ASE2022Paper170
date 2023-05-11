@@ -97,7 +97,7 @@ func main() {
 		strategy := opts.AnalysisStrategy()
 		log.Printf("Performing points-to analysis with %s\n...", strategy)
 
-		ctx, _ := context.WithTimeout(context.Background(), 5*time.Minute)
+		ctx, _ := context.WithTimeout(context.Background(), 60*time.Minute)
 		c := make(chan *pointer.Result)
 
 		start := time.Now()
