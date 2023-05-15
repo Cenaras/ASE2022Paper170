@@ -69,6 +69,7 @@ func collectPtsToQueries(prog *ssa.Program, config *pointer.Config, include Incl
 		}
 	}
 
+	insn_no := 0
 	for fun := range ssautil.AllFunctions(prog) {
 		verbosePrint("Collecting channels and functions in: %s\n", fun.Name())
 		for _, param := range fun.Params {
@@ -79,6 +80,7 @@ func collectPtsToQueries(prog *ssa.Program, config *pointer.Config, include Incl
 		}
 
 		for _, block := range fun.Blocks {
+			insn_no += len(block.Instrs)
 			for _, insn := range block.Instrs {
 				switch v := insn.(type) {
 				case *ssa.Call:
@@ -95,6 +97,7 @@ func collectPtsToQueries(prog *ssa.Program, config *pointer.Config, include Incl
 		}
 		verbosePrint("\n")
 	}
+	log.Printf("Number of instructions: %d", insn_no)
 }
 
 func checkType(t types.Type, include IncludeType) TargetType {
