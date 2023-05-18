@@ -19,6 +19,7 @@ import (
 	"Goat/analysis/upfront/chreflect"
 	"Goat/analysis/upfront/loopinline"
 	dot "Goat/graph"
+	"Goat/mayfailcast"
 	"Goat/pkgutil"
 	tu "Goat/testutil"
 	"Goat/utils"
@@ -97,7 +98,7 @@ func main() {
 		strategy := opts.AnalysisStrategy()
 		log.Printf("Performing points-to analysis with %s\n...", strategy)
 
-		ctx, _ := context.WithTimeout(context.Background(), 60*time.Minute)
+		ctx, _ := context.WithTimeout(context.Background(), 5*time.Minute)
 		c := make(chan *pointer.Result)
 
 		start := time.Now()
@@ -133,16 +134,18 @@ func main() {
 			}
 		})
 
+		log.Printf("Number of nodes: %d", ptaResult.NoNodes)
+
 		return ptaResult, progCfg
 	}
 
-	preanalysisPipeline(u.IncludeType{All: true})
-	//start := time.Now()
-	//mayFails, totalCasts, totalOkCasts := mayfailcast.MayFailCast(prog, result)
-	//log.Printf("Number of non-ok casts: %d", totalCasts)
-	//log.Printf("Number of ok casts: %d", totalOkCasts)
-	//log.Printf("Number of May Fail Casts: %d", len(mayFails))
-	//log.Printf("Cast analysis took: %f seconds", time.Since(start).Seconds())
+	result, _ := preanalysisPipeline(u.IncludeType{All: true})
+	start := time.Now()
+	mayFails, totalCasts, totalOkCasts := mayfailcast.MayFailCast(prog, result)
+	log.Printf("Number of non-ok casts: %d", totalCasts)
+	log.Printf("Number of ok casts: %d", totalOkCasts)
+	log.Printf("Number of May Fail Casts: %d", len(mayFails))
+	log.Printf("Cast analysis took: %f seconds", time.Since(start).Seconds())
 
 }
 
