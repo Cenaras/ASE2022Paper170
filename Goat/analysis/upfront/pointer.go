@@ -165,6 +165,7 @@ func Andersen(prog *ssa.Program, mains []*ssa.Package, include IncludeType, stra
 	strategyMap["SB1Obj"] = &pointer.SB1Obj{false}
 	strategyMap["SA1Obj"] = &pointer.SA1Obj{false}
 	strategyMap["2SObj+H"] = &pointer.S2ObjH{false}
+	strategyMap["2Call+H"] = &pointer.KCallNHeap{2, 2, false}
 
 	a_config := &pointer.Config{
 		Mains:           mains,
