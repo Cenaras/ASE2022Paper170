@@ -1,16 +1,15 @@
 package main
 
 import (
-	"Goat/analysis/cfg"
 	u "Goat/analysis/upfront"
+	"Goat/mayfailcast"
 	"Goat/pkgutil"
-	"context"
 	"fmt"
 	"log"
+	"os"
 	"testing"
 	"time"
 
-	"golang.org/x/tools/go/pointer"
 	"golang.org/x/tools/go/ssa/ssautil"
 )
 
@@ -38,51 +37,21 @@ func TestProfiling(t *testing.T) {
 	allPackages := pkgutil.AllPackages(prog)
 	pkgutil.GetLocalPackages(mains, allPackages)
 
+	strategies := []string{"insens", "default", "1Obj", "2Obj+H", "1Call", "1Call+H", "U1Obj", "U2Obj+H",
+		"SB1Obj", "SA1Obj", "2SObj+H", "2Call+H"}
 
-	preanalysisPipeline := func(includes u.IncludeType) (*pointer.Result, *cfg.Cfg) {
-		fmt.Println()
-
-		//strategy := opts.AnalysisStrategy()
-		log.Printf("Performing points-to analysis with\n...")
-
-		ctx, _ := context.WithTimeout(context.Background(), 5*time.Minute)
-		c := make(chan *pointer.Result)
-
+	f, _ := os.Create("results.txt")
+	defer f.Close()
+	for _, strategy := range strategies {
 		start := time.Now()
-		go func() {
-			ptaResult := u.Andersen(prog, mains, includes, "")
-			c <- ptaResult
-		}()
-		var ptaResult *pointer.Result
-		select {
-		case ptaResult = <-c:
-		case <-ctx.Done():
-			panic("Analysis timed out")
-		}
-
+		ptaResult := u.Andersen(prog, mains, u.IncludeType{All: true}, strategy)
 		elapsed := time.Since(start)
-		log.Printf("Points-to analysis took: %f seconds", elapsed.Seconds())
-		log.Println("Points-to analysis done")
-		fmt.Println()
-
-		//log.Println("Extending CFG...")
-		progCfg := cfg.GetCFG(prog, mains, ptaResult)
-		//log.Println("CFG extensions done")
-		//fmt.Println()
-
-		opts.OnVerbose(func() {
-			for val, ptr := range ptaResult.Queries {
-				fmt.Printf("Points to information for \"%s\" at %d (%s):\n",
-					val, val.Pos(), prog.Fset.Position(val.Pos()))
-				for _, label := range ptr.PointsTo().Labels() {
-					fmt.Printf("%s : %d (%s), ", label, (*label).Pos(), prog.Fset.Position((*label).Pos()))
-				}
-				fmt.Print("\n\n")
-			}
-		})
-
-		return ptaResult, progCfg
+		f.WriteString(fmt.Sprintf("Running strategy %s\n", strategy))
+		f.WriteString(fmt.Sprintf("Analysis took %fs\n", elapsed.Seconds()))
+		f.WriteString(fmt.Sprintf("Number of nodes: %d\n", ptaResult.NoNodes))
+		mayFails, totalCasts, totalOkCasts := mayfailcast.MayFailCast(prog, ptaResult)
+		f.WriteString(fmt.Sprintf("Number of non-ok casts: %d\n", totalCasts))
+		f.WriteString(fmt.Sprintf("Number of ok casts: %d\n", totalOkCasts))
+		f.WriteString(fmt.Sprintf("Number of May Fail Casts: %d\n\n", len(mayFails)))
 	}
-
-	preanalysisPipeline(u.IncludeType{All: true})
 }
