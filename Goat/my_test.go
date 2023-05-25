@@ -16,7 +16,7 @@ import (
 func TestProfiling(t *testing.T) {
 	gopath := "/home/cenaras/uni/masters/ForkASE/ASE2022Paper170/Goat/external/gfuzz"
 	modulepath := "external/gfuzz/tidb"
-	path := "github.com/pingcap/tidb/cmd/benchdb"
+	path := "github.com/pingcap/tidb/bindinfo"
 
 	pkgs, _ := pkgutil.LoadPackages(pkgutil.LoadConfig{
 		GoPath:       gopath,
