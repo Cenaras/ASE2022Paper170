@@ -43,6 +43,7 @@ func TestProfiling(t *testing.T) {
 	f, _ := os.Create("results.txt")
 	defer f.Close()
 	for _, strategy := range strategies {
+		fmt.Println("Running strategy ", strategy)
 		start := time.Now()
 		ptaResult := u.Andersen(prog, mains, u.IncludeType{All: true}, strategy)
 		elapsed := time.Since(start)
