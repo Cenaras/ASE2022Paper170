@@ -156,16 +156,20 @@ func Andersen(prog *ssa.Program, mains []*ssa.Package, include IncludeType, stra
 	strategyMap := make(map[string]pointer.ContextStrategy)
 	strategyMap["insens"] = &pointer.Insens{}
 	strategyMap["default"] = nil
-	strategyMap["1Obj"] = &pointer.KObjNHeap{1, 0, false}
-	strategyMap["2Obj+H"] = &pointer.KObjNHeap{2, 1, false}
-	strategyMap["1Call"] = &pointer.KCallNHeap{1, 0, false}
-	strategyMap["1Call+H"] = &pointer.KCallNHeap{1, 1, false}
-	strategyMap["U1Obj"] = &pointer.U1Obj{false}
-	strategyMap["U2Obj+H"] = &pointer.U2ObjH{false}
-	strategyMap["SB1Obj"] = &pointer.SB1Obj{false}
-	strategyMap["SA1Obj"] = &pointer.SA1Obj{false}
-	strategyMap["2SObj+H"] = &pointer.S2ObjH{false}
-	strategyMap["2Call+H"] = &pointer.KCallNHeap{2, 2, false}
+	strategyMap["1Obj"] = &pointer.KObjNHeap{1, 0, true}
+	strategyMap["2Obj+H"] = &pointer.KObjNHeap{2, 1, true}
+	strategyMap["1Call"] = &pointer.KCallNHeap{1, 0, true}
+	strategyMap["1Call+H"] = &pointer.KCallNHeap{1, 1, true}
+	strategyMap["U1Obj"] = &pointer.U1Obj{true}
+	strategyMap["U2Obj+H"] = &pointer.U2ObjH{true}
+	strategyMap["SB1Obj"] = &pointer.SB1Obj{true}
+	strategyMap["SA1Obj"] = &pointer.SA1Obj{true}
+	strategyMap["2SObj+H"] = &pointer.S2ObjH{true}
+	strategyMap["2Call+H"] = &pointer.KCallNHeap{2, 2, true}
+	strategyMap["S2CallF"] = &pointer.S2Call{false}
+	strategyMap["S1CallF"] = &pointer.S1Call{false}
+	strategyMap["S2CallT"] = &pointer.S2Call{true}
+	strategyMap["S1CallT"] = &pointer.S1Call{true}
 
 	a_config := &pointer.Config{
 		Mains:           mains,

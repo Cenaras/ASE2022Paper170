@@ -14,9 +14,9 @@ import (
 )
 
 func TestProfiling(t *testing.T) {
-	gopath := "/home/cenaras/uni/masters/ForkASE/ASE2022Paper170/Goat/external/gfuzz"
+	gopath := "/home/kasper/Speciale/ASE2022Paper170/Goat/external/gfuzz"
 	modulepath := "external/gfuzz/tidb"
-	path := "github.com/pingcap/tidb/bindinfo"
+	path := "github.com/pingcap/tidb/store/mockstore/unistore/util/lockwaiter"
 
 	pkgs, _ := pkgutil.LoadPackages(pkgutil.LoadConfig{
 		GoPath:       gopath,
@@ -37,8 +37,8 @@ func TestProfiling(t *testing.T) {
 	allPackages := pkgutil.AllPackages(prog)
 	pkgutil.GetLocalPackages(mains, allPackages)
 
-	strategies := []string{"insens", "default", "1Obj", "2Obj+H", "1Call", "1Call+H", "U1Obj", "U2Obj+H",
-		"SB1Obj", "SA1Obj", "2SObj+H", "2Call+H"}
+	strategies := []string{"1Obj", "2Obj+H", "U1Obj", "U2Obj+H",
+		"SB1Obj", "SA1Obj", "2SObj+H", "S1CallF", "S1CallT", "S2CallF", "S2CallT"}
 
 	f, _ := os.Create("results.txt")
 	defer f.Close()
